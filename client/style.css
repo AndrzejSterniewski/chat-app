@@ -104,6 +104,10 @@ p {
   background: #3498db;
 }
 
+.chat--bot {
+  font-style: italic;
+}
+
 .show {
   display: block;
 }
