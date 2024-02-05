@@ -8,16 +8,37 @@ const socket = require('socket.io');
 const io = socket(server);
 
 const messages = [];
+const users = [];
 
 io.on('connection', (socket) => {
-    console.log('New client! Its id – ' + socket.id);
+
+    socket.on('join', (login) => {
+        console.log(login + ' logged in.');
+        users.push({ name: login, id: socket.id });
+        socket.broadcast.emit('message', {
+            author: 'Chat-Bot',
+            content: `${login} has joined conversation.`
+        });
+        console.log(users, 'from login');
+    });
+
     socket.on('message', (message) => {
         console.log('Oh, I\'ve got something from ' + socket.id);
         messages.push(message);
         socket.broadcast.emit('message', message);
     });
-    socket.on('disconnect', () => { console.log('Oh, socket ' + socket.id + ' has left') });
-    console.log('I\'ve added a listener on message event \n');
+
+    socket.on('disconnect', () => {
+        const user = users.find(user => user.id === socket.id);
+        if (user) {
+            socket.broadcast.emit('message', {
+                author: 'Chat-Bot',
+                content: `${user.name} has left the conversation... :(`
+            });
+            users.splice(user, 1);
+        };
+        console.log(users, 'disconnect');
+    });
 });
 
 app.use(express.static(path.join(__dirname, '/client')));
