@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
-        const user = users.find(user => user.id === socket.id);
+        const user = users.findIndex(user => user.id === socket.id);
         if (user) {
             socket.broadcast.emit('message', {
                 author: 'Chat-Bot',
