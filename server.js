@@ -30,7 +30,7 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         const user = users.findIndex(user => user.id === socket.id);
-        if (user) {
+        if (user !== -1) {
             socket.broadcast.emit('message', {
                 author: 'Chat-Bot',
                 content: `${user.name} has left the conversation... :(`
